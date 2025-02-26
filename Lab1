@@ -24,6 +24,7 @@ void append(struct Node** head_ref, int new_data) {
     last->next = new_node;
 }
 
+//THIS WILL REVERSE THE LIST 
 void reverse(struct Node** head_ref) {
     struct Node* prev = NULL;
     struct Node* current = *head_ref;
@@ -45,6 +46,7 @@ struct Node* reverseList(struct Node* head)
     return n;
 }
 
+//THIS WILL REMOVE ANY ELEMENT WITH THE SAME VALUE
 struct Node* removeElements(struct Node* head, int val) {
     while (head && head->data == val) {
         head = head->next;
