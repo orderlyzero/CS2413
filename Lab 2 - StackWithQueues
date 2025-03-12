@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *arr;
+    int front, rear, size, capacity;
+} MyQueue;
+
+// Initialize a queue
+MyQueue* myQueueCreate(int capacity) {
+    MyQueue* queue = (MyQueue*)malloc(sizeof(MyQueue));
+    queue->capacity = capacity;
+    queue->front = 0;
+    queue->rear = -1;
+    queue->size = 0;
+    queue->arr = (int*)malloc(capacity * sizeof(int));
+    return queue;
+}
+
+
+bool myQueueEmpty(MyQueue* obj) {
+    return obj->size == 0;
+}
+
+void myQueuePush(MyQueue* obj, int x) {
+    if (obj->size < obj->capacity) {
+        obj->rear = (obj->rear + 1) % obj->capacity;
+        obj->arr[obj->rear] = x;
+        obj->size++;
+    }
+}
+
+int myQueuePop(MyQueue* obj) {
+    if (!myQueueEmpty(obj)) {
+        int val = obj->arr[obj->front];
+        obj->front = (obj->front + 1) % obj->capacity;
+        obj->size--;
+        return val;
+    }
+    return -1;
+}
+
+int myQueueFront(MyQueue* obj) {
+    return obj->arr[obj->front];
+}
+
+void myQueueFree(MyQueue* obj) {
+    free(obj->arr);
+    free(obj);
+}
+
+// Stack structure using two queues
+typedef struct {
+    MyQueue *queue1;
+    MyQueue *queue2;
+} MyStack;
+
+
+MyStack* myStackCreate() {
+    MyStack* stack = (MyStack*)malloc(sizeof(MyStack));
+    stack->queue1 = myQueueCreate(100);
+    stack->queue2 = myQueueCreate(100);
+    return stack;
+}
+
+// Push element onto stack
+void myStackPush(MyStack* obj, int x) {
+    myQueuePush(obj->queue2, x);
+    while (!myQueueEmpty(obj->queue1)) {
+        myQueuePush(obj->queue2, myQueuePop(obj->queue1));
+    }
+    MyQueue* temp = obj->queue1;
+    obj->queue1 = obj->queue2;
+    obj->queue2 = temp;
+}
+
+
+int myStackPop(MyStack* obj) {
+    return myQueuePop(obj->queue1);
+}
+
+
+int myStackTop(MyStack* obj) {
+    return myQueueFront(obj->queue1);
+}
+
+// Check if stack is empty
+bool myStackEmpty(MyStack* obj) {
+    return myQueueEmpty(obj->queue1);
+}
+
+
+void myStackFree(MyStack* obj) {
+    myQueueFree(obj->queue1);
+    myQueueFree(obj->queue2);
+    free(obj);
+}
+
+int main() {
+    MyStack* stack = myStackCreate();
+    myStackPush(stack, 1);
+    myStackPush(stack, 2);
+    printf("Top: %d\n", myStackTop(stack)); // 2
+    printf("Pop: %d\n", myStackPop(stack)); // 2
+    printf("Pop: %d\n", myStackPop(stack)); // 1
+    printf("Empty: %d\n", myStackEmpty(stack)); // 1
+    myStackFree(stack);
+    return 0;
+}
