@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+}; 
+
+struct Node* newNode(int val)
+{
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node -> data = val;
+    node -> left = node -> right = NULL;
+    return node;
+}
+
+bool isMirror(struct Node* a, struct Node* b)
+ {
+    if(a == NULL && b == NULL)
+        return true;
+    if(a == NULL || b == NULL)
+        return false;
+
+    return(a -> data == b-> data) 
+        && isMirror(a->left, b ->right) 
+        && isMirror(a-> right, b-> left);
+}
+
+
+bool isSymmetric(struct Node* head)
+{
+    return isMirror(head, head);
+}
+ 
+int main()
+{
+    struct Node* root = newNode(1);
+    root->left = newNode(2);
+    root->right = newNode(2);
+    root->left->left = newNode(3);
+    root->left->right = newNode(4);
+    root->right->left = newNode(4);
+    root->right->right = newNode(3);
+
+    if (isSymmetric(root))
+    printf("The tree is a mirror of itself.\n");
+    else
+    printf("The tree is not a mirror of itself.\n");
+
+    return 0;
+}
